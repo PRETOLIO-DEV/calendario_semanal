@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_week/flutter_calendar_week.dart';
-import 'package:device_preview/device_preview.dart';
 
-void main() => runApp(DevicePreview(
-  enabled: true,
-  //!kReleaseMode,
-  builder: (context) => MyApp(),
-),);
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
