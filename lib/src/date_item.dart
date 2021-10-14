@@ -98,18 +98,18 @@ class __DateItemState extends State<DateItem> {
           },
         )
       : Container(
-          width: size ?? 50,
-          height: size ?? 50,
+          width: widget.size ?? 50.0,
+          height: widget.size ?? 50.0,
         );
 
   /// Body layout
   Widget _body() => Container(
-        width: size ?? 50,
-        height: size ?? 50,
+        width: widget.size ?? 50,
+        height: widget.size ?? 50,
         alignment: FractionalOffset.center,
         child: GestureDetector(
           onLongPress: _onLongPressed,
-          child: FlatButton(
+          child: MaterialButton(
               padding: EdgeInsets.all(5),
               onPressed: _onPressed,
               color: _defaultBackgroundColor!,
