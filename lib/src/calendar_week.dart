@@ -332,9 +332,14 @@ class _CalendarWeekState extends State<CalendarWeek> {
     super.initState();
     _setUp();
   }
+  double _size = 50;
 
   @override
-  Widget build(BuildContext context) => _body();
+  Widget build(BuildContext context) {
+    _size = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height ?
+          MediaQuery.of(context).size.width : MediaQuery.of(context).size.height;
+    return _body();
+  }
 
   /// Body layout
   Widget _body() => Container(
@@ -393,7 +398,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Container(
-          width: (MediaQuery.of(context).size.width / 7) - 10,
+          width: (_size / 7) - 10,
           child: Text(
             title,
             style: widget.weekendsIndexes
@@ -416,7 +421,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
   Widget _dateItem(DateTime date) => DateItem(
       today: _calendarController._today,
       date: date,
-      size: (MediaQuery.of(context).size.width / 7) - 10,
+      size: (_size / 7) - 10,
       dateStyle: compareDate(date, _calendarController._today)
           ? widget.todayDateStyle
           : date != null && (date.weekday == 6 || date.weekday == 7)
