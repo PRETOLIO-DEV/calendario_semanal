@@ -173,7 +173,7 @@ class CalendarWeek extends StatefulWidget {
   final List<DecorationItem> decorations;
 
   /// Height of calendar
-  final double height;
+  double height;
 
   /// Page controller
   final CalendarWeekController? controller;
@@ -218,7 +218,7 @@ class CalendarWeek extends StatefulWidget {
           {Key? key,
           DateTime? maxDate,
           DateTime? minDate,
-          double height = 100,
+          double height = 100, // 100 minimo
           Widget Function(DateTime)? monthViewBuilder,
           TextStyle dayOfWeekStyle =
               const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
@@ -335,10 +335,14 @@ class _CalendarWeekState extends State<CalendarWeek> {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
 
-    sizeOriginal = w > h ? (h / 7) - 10 : (w / 7) - 10;
-    if(sizeOriginal > widget.height - 60) size = widget.height - 60;
-    else size = sizeOriginal;
+    if(widget.height < 100) widget.height = 100;
 
+    sizeOriginal = w > h ? (h / 7) - 10 : (w / 7) - 10;
+    if(sizeOriginal > widget.height - 60) {
+      size = widget.height - 60;
+    } else {
+      size = sizeOriginal;
+    }
     return _body();
   }
 
