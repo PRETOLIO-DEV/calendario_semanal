@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_week/src/cache_stream_widget.dart';
-import 'package:flutter_calendar_week/src/utils/compare_date.dart';
 import 'package:flutter_calendar_week/src/utils/cache_stream.dart';
+import 'package:flutter_calendar_week/src/utils/compare_date.dart';
 
 class DateItem extends StatefulWidget {
   /// Today
@@ -27,11 +27,11 @@ class DateItem extends StatefulWidget {
 
   /// Alignment a decoration
   final Alignment? decorationAlignment;
-  
+
   final double? size;
 
   /// Specify a shape
-  final ShapeBorder? dayShapeBorder;
+  final BoxShape? dayShapeBorder;
 
   /// [Callback] function for press event
   final void Function(DateTime)? onDatePressed;
@@ -50,7 +50,7 @@ class DateItem extends StatefulWidget {
     required this.date,
     required this.cacheStream,
     this.dateStyle,
-	this.size,
+    this.size,
     this.pressedDateStyle,
     this.backgroundColor = Colors.transparent,
     this.todayBackgroundColor = Colors.orangeAccent,
@@ -104,34 +104,38 @@ class __DateItemState extends State<DateItem> {
 
   /// Body layout
   Widget _body() => Container(
-        width: widget.size ?? 50,
-        height: widget.size ?? 50,
+        width: widget.size ?? 50.0,
+        height: widget.size ?? 50.0,
         alignment: FractionalOffset.center,
         child: GestureDetector(
           onLongPress: _onLongPressed,
-          child: MaterialButton(
-              padding: EdgeInsets.all(5),
-              onPressed: _onPressed,
-              color: _defaultBackgroundColor!,
-              shape: widget.dayShapeBorder!,
-              child: Stack(
-                children: <Widget>[
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        '${widget.date!.day}',
-                        style: _defaultTextStyle!,
+          child: GestureDetector(
+            onTap: _onPressed,
+            child: Container(
+                decoration: BoxDecoration(
+                  color: _defaultBackgroundColor!,
+                  shape: widget.dayShapeBorder!,
+                ),
+                padding: EdgeInsets.all(5),
+                child: Stack(
+                  children: <Widget>[
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: 0,
+                      bottom: 0,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          '${widget.date!.day}',
+                          style: _defaultTextStyle!,
+                        ),
                       ),
                     ),
-                  ),
-                  _decoration()
-                ],
-              )),
+                    _decoration()
+                  ],
+                )),
+          ),
         ),
       );
 

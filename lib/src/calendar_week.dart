@@ -1,15 +1,14 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar_week/src/custom_scroll_behaiver.dart';
+import 'package:flutter_calendar_week/src/date_item.dart';
 import 'package:flutter_calendar_week/src/models/decoration_item.dart';
 import 'package:flutter_calendar_week/src/models/week_item.dart';
-import 'package:flutter_calendar_week/src/date_item.dart';
-import 'package:flutter_calendar_week/src/utils/find_current_week_index.dart';
-import 'package:flutter_calendar_week/src/utils/separate_weeks.dart';
-import 'package:flutter_calendar_week/src/utils/compare_date.dart';
-
 import 'package:flutter_calendar_week/src/strings.dart';
 import 'package:flutter_calendar_week/src/utils/cache_stream.dart';
+import 'package:flutter_calendar_week/src/utils/compare_date.dart';
+import 'package:flutter_calendar_week/src/utils/find_current_week_index.dart';
+import 'package:flutter_calendar_week/src/utils/separate_weeks.dart';
 
 class CalendarWeekController {
 /*
@@ -34,6 +33,7 @@ Example:
                 onWeekChanged: () {
                   // Do something
                 },
+                monthViewBuilder: (date) => Text(date.toString()),
                 decorations: [
                   DecorationItem(
                       decorationAlignment: FractionalOffset.bottomRight,
@@ -110,7 +110,7 @@ class CalendarWeek extends StatefulWidget {
   final DateTime maxDate;
 
   /// Style of months
-  final TextStyle monthStyle;
+  final Widget Function(DateTime)? monthViewBuilder;
 
   /// Style of day of week
   final TextStyle dayOfWeekStyle;
@@ -167,7 +167,7 @@ class CalendarWeek extends StatefulWidget {
   final EdgeInsets marginMonth;
 
   /// Shape of day
-  final ShapeBorder dayShapeBorder;
+  final BoxShape dayShapeBorder;
 
   /// List of decorations
   final List<DecorationItem> decorations;
@@ -186,7 +186,7 @@ class CalendarWeek extends StatefulWidget {
       this.maxDate,
       this.minDate,
       this.height,
-      this.monthStyle,
+      this.monthViewBuilder,
       this.dayOfWeekStyle,
       this.monthAlignment,
       this.dateStyle,
@@ -219,8 +219,7 @@ class CalendarWeek extends StatefulWidget {
           DateTime? maxDate,
           DateTime? minDate,
           double height = 100,
-          TextStyle monthStyle =
-              const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
+          Widget Function(DateTime)? monthViewBuilder,
           TextStyle dayOfWeekStyle =
               const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
           FractionalOffset monthAlignment = FractionalOffset.center,
@@ -244,7 +243,7 @@ class CalendarWeek extends StatefulWidget {
               const TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
           EdgeInsets marginMonth = const EdgeInsets.symmetric(vertical: 4),
           EdgeInsets marginDayOfWeek = const EdgeInsets.symmetric(vertical: 4),
-          CircleBorder dayShapeBorder = const CircleBorder(),
+          BoxShape dayShapeBorder = BoxShape.circle,
           List<DecorationItem> decorations = const [],
           CalendarWeekController? controller,
           Function()? onWeekChanged}) =>
@@ -253,7 +252,7 @@ class CalendarWeek extends StatefulWidget {
           maxDate ?? DateTime.now().add(Duration(days: 180)),
           minDate ?? DateTime.now().add(Duration(days: -180)),
           height,
-          monthStyle,
+          monthViewBuilder,
           dayOfWeekStyle,
           monthAlignment,
           dateStyle,
@@ -328,22 +327,37 @@ class _CalendarWeekState extends State<CalendarWeek> {
     _setUp();
   }
 
+  double size = 50;
+  double sizeOriginal = 50;
+
   @override
-  Widget build(BuildContext context) => _body();
+  Widget build(BuildContext context) {
+    double w = MediaQuery.of(context).size.width;
+    double h = MediaQuery.of(context).size.height;
+
+    sizeOriginal = w > h ? (h / 7) - 10 : (w / 7) - 10;
+    if(sizeOriginal > widget.height - 60) size = widget.height - 60;
+    else size = sizeOriginal;
+
+    return _body();
+  }
 
   /// Body layout
   Widget _body() => Container(
       color: widget.backgroundColor,
       width: double.infinity,
       height: widget.height,
-      child: PageView.builder(
-        controller: _pageController,
-        itemCount: controller._weeks.length,
-        onPageChanged: (currentPage) {
-          widget.controller!._currentWeekIndex = currentPage;
-          widget.onWeekChanged();
-        },
-        itemBuilder: (_, i) => _week(controller._weeks[i]),
+      child: ScrollConfiguration(
+        behavior: CustomScrollBehavior(),
+        child: PageView.builder(
+          controller: _pageController,
+          itemCount: controller._weeks.length,
+          onPageChanged: (currentPage) {
+            widget.controller!._currentWeekIndex = currentPage;
+            widget.onWeekChanged();
+          },
+          itemBuilder: (_, i) => _week(controller._weeks[i]),
+        ),
       ));
 
   /// Layout of week
@@ -351,7 +365,12 @@ class _CalendarWeekState extends State<CalendarWeek> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           // Month
-          widget.monthDisplay ? _monthItem(weeks.month) : Container(),
+          (widget.monthDisplay &&
+                  widget.monthViewBuilder != null &&
+                  weeks.days.firstWhere((el) => el != null) != null)
+              ? widget
+                  .monthViewBuilder!(weeks.days.firstWhere((el) => el != null)!)
+              : _monthItem(weeks.month),
 
           /// Day of week layout
           _dayOfWeek(weeks.dayOfWeek),
@@ -368,7 +387,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
             margin: widget.marginMonth,
             child: Text(
               title,
-              style: widget.monthStyle,
+              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
             )),
@@ -388,7 +407,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Container(
-          width: (MediaQuery.of(context).size.width / 7) - 10,
+          width: sizeOriginal,
           child: Text(
             title,
             style: widget.weekendsIndexes
@@ -411,7 +430,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
   Widget _dateItem(DateTime? date) => DateItem(
       today: controller._today,
       date: date,
-	  size: (MediaQuery.of(context).size.width / 7) - 10,
+      size: size,
       dateStyle: compareDate(date, controller._today)
           ? widget.todayDateStyle
           : date != null && (date.weekday == 6 || date.weekday == 7)
