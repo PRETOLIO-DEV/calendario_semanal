@@ -118,6 +118,8 @@ class CalendarWeek extends StatefulWidget {
   /// Style of weekends days
   final TextStyle weekendsStyle;
 
+
+  final TextStyle monthStyle;
   /// Alignment of day day of week
   final FractionalOffset monthAlignment;
 
@@ -191,6 +193,7 @@ class CalendarWeek extends StatefulWidget {
       this.monthAlignment,
       this.dateStyle,
       this.todayDateStyle,
+      this.monthStyle,
       this.todayBackgroundColor,
       this.datePressedBackgroundColor,
       this.datePressedStyle,
@@ -229,6 +232,8 @@ class CalendarWeek extends StatefulWidget {
               color: Colors.orange, fontWeight: FontWeight.w400),
           Color todayBackgroundColor = Colors.black12,
           Color pressedDateBackgroundColor = Colors.blue,
+          TextStyle monthStyle =
+              const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
           TextStyle pressedDateStyle =
               const TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
           Color dateBackgroundColor = Colors.transparent,
@@ -257,6 +262,7 @@ class CalendarWeek extends StatefulWidget {
           monthAlignment,
           dateStyle,
           todayDateStyle,
+          monthStyle,
           todayBackgroundColor,
           pressedDateBackgroundColor,
           pressedDateStyle,
@@ -391,7 +397,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
             margin: widget.marginMonth,
             child: Text(
               title,
-              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
+              style: widget.monthStyle,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
             )),
