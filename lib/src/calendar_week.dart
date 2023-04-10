@@ -344,9 +344,9 @@ class _CalendarWeekState extends State<CalendarWeek> {
     if(widget.height < 100) widget.height = 100;
 
     sizeOriginal = w > h ? (h / 7) - 10 : (w / 7) - 10;
-    print(sizeOriginal);
+
     if(sizeOriginal > widget.height - 60) {
-      size = widget.height - 52;
+      size = widget.height - 51;
     } else if(sizeOriginal <= 40){
       size = 46;
     } else {
