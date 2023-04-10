@@ -344,8 +344,11 @@ class _CalendarWeekState extends State<CalendarWeek> {
     if(widget.height < 100) widget.height = 100;
 
     sizeOriginal = w > h ? (h / 7) - 10 : (w / 7) - 10;
+    print(sizeOriginal);
     if(sizeOriginal > widget.height - 60) {
-      size = widget.height - 60;
+      size = widget.height - 52;
+    } else if(sizeOriginal <= 40){
+      size = 46;
     } else {
       size = sizeOriginal;
     }
@@ -434,7 +437,8 @@ class _CalendarWeekState extends State<CalendarWeek> {
   /// Date layout
   Widget _dates(List<DateTime?> dates) => Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: dates.map(_dateItem).toList());
+      children: dates.map(_dateItem).toList()
+  );
 
   /// Date item layout
   Widget _dateItem(DateTime? date) => DateItem(
@@ -452,14 +456,14 @@ class _CalendarWeekState extends State<CalendarWeek> {
       pressedBackgroundColor: widget.datePressedBackgroundColor,
       decorationAlignment: () {
         /// If date is contain in decorations list, use decorations Alignment
-        if (widget.decorations.isNotEmpty) {
+        /*if (widget.decorations.isNotEmpty) {
           final List<DecorationItem> matchDate = widget.decorations
               .where((ele) => compareDate(ele.date, date))
               .toList();
           return matchDate.isNotEmpty
               ? matchDate[0].decorationAlignment
               : FractionalOffset.center;
-        }
+        }*/
         return FractionalOffset.center;
       }(),
       dayShapeBorder: widget.dayShapeBorder,
