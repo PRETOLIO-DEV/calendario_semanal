@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_week/src/custom_scroll_behaiver.dart';
 import 'package:flutter_calendar_week/src/date_item.dart';
@@ -381,6 +382,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
             ),
           ),
 
+          if(kIsWeb)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
