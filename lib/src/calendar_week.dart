@@ -304,7 +304,6 @@ class _CalendarWeekState extends State<CalendarWeek> {
   void _jumToDateHandler(DateTime? dateTime) {
     _cacheStream.add(dateTime);
     page = widget.controller!._currentWeekIndex;
-    print('_jumToDateHandler '+ page.toString());
     _pageController.animateToPage(page,
         duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
