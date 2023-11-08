@@ -372,7 +372,9 @@ class _CalendarWeekState extends State<CalendarWeek> {
               controller: _pageController,
               itemCount: controller._weeks.length,
               onPageChanged: (currentPage) {
-                page = currentPage;
+                setState(() {
+                  page = currentPage;
+                });
                 widget.controller!._currentWeekIndex = currentPage;
                 widget.onWeekChanged();
               },
