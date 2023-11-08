@@ -295,7 +295,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
 
   /// Page controller
   late PageController _pageController;
-
+  int page = 0;
   CalendarWeekController _defaultCalendarController = CalendarWeekController();
 
   CalendarWeekController get controller =>
@@ -303,7 +303,9 @@ class _CalendarWeekState extends State<CalendarWeek> {
 
   void _jumToDateHandler(DateTime? dateTime) {
     _cacheStream.add(dateTime);
-    _pageController.animateToPage(widget.controller!._currentWeekIndex,
+    page = widget.controller!._currentWeekIndex;
+    print('_jumToDateHandler '+ page.toString());
+    _pageController.animateToPage(page,
         duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
 
@@ -324,6 +326,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
 
     /// Init Page controller
     /// Set [initialPage] is page contain today
+    page = controller._currentWeekIndex;
     _pageController = PageController(initialPage: controller._currentWeekIndex);
   }
 
@@ -360,17 +363,44 @@ class _CalendarWeekState extends State<CalendarWeek> {
       color: widget.backgroundColor,
       width: double.infinity,
       height: widget.height,
-      child: ScrollConfiguration(
-        behavior: CustomScrollBehavior(),
-        child: PageView.builder(
-          controller: _pageController,
-          itemCount: controller._weeks.length,
-          onPageChanged: (currentPage) {
-            widget.controller!._currentWeekIndex = currentPage;
-            widget.onWeekChanged();
-          },
-          itemBuilder: (_, i) => _week(controller._weeks[i]),
-        ),
+      child:  Stack(
+        alignment: Alignment.center,
+        children: [
+          ScrollConfiguration(
+            behavior: CustomScrollBehavior(),
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: controller._weeks.length,
+              onPageChanged: (currentPage) {
+                page = currentPage;
+                widget.controller!._currentWeekIndex = currentPage;
+                widget.onWeekChanged();
+              },
+              itemBuilder: (_, i) => _week(controller._weeks[i]),
+            ),
+          ),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                  onPressed: page - 1 >= 0 ? (){
+                    _pageController.animateToPage(page - 1,
+                        duration: Duration(milliseconds: 300), curve: Curves.ease);
+                  } : null,
+                  child: Center(child: Icon(Icons.chevron_left_sharp, size: 50))
+              ),
+
+              TextButton(
+                  onPressed: page + 1 < controller._weeks.length ? (){
+                    _pageController.animateToPage(page + 1,
+                        duration: Duration(milliseconds: 300), curve: Curves.ease);
+                  } : null,
+                  child: Center(child: Icon(Icons.chevron_right_sharp, size: 50,))
+              ),
+            ],
+          ),
+        ],
       ));
 
   /// Layout of week
