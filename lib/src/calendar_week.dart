@@ -184,6 +184,8 @@ class CalendarWeek extends StatefulWidget {
   /// [Callback] changed week event
   final Function() onWeekChanged;
 
+  final bool activeIcon;
+
   CalendarWeek._(
       Key? key,
       this.maxDate,
@@ -212,7 +214,8 @@ class CalendarWeek extends StatefulWidget {
       this.dayShapeBorder,
       this.decorations,
       this.controller,
-      this.onWeekChanged)
+      this.onWeekChanged,
+      this.activeIcon,)
       : assert(daysOfWeek.length == 7),
         assert(months.length == 12),
         assert(minDate.isBefore(maxDate)),
@@ -252,7 +255,8 @@ class CalendarWeek extends StatefulWidget {
           BoxShape dayShapeBorder = BoxShape.circle,
           List<DecorationItem> decorations = const [],
           CalendarWeekController? controller,
-          Function()? onWeekChanged}) =>
+          Function()? onWeekChanged,
+          bool activeIcon = true}) =>
       CalendarWeek._(
           key,
           maxDate ?? DateTime.now().add(Duration(days: 180)),
@@ -281,7 +285,8 @@ class CalendarWeek extends StatefulWidget {
           dayShapeBorder,
           decorations,
           controller,
-          onWeekChanged ?? () {});
+          onWeekChanged ?? () {},
+          activeIcon);
 
   @override
   _CalendarWeekState createState() => _CalendarWeekState();
@@ -382,7 +387,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
             ),
           ),
 
-          if(kIsWeb)
+          if(kIsWeb && widget.activeIcon)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
