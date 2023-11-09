@@ -458,7 +458,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Container(
-          width: sizeOriginal,
+          width: size,
           child: Text(
             title,
             style: widget.weekendsIndexes
