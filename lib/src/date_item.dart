@@ -3,6 +3,7 @@ import 'package:flutter_calendar_week/src/cache_stream_widget.dart';
 import 'package:flutter_calendar_week/src/utils/cache_stream.dart';
 import 'package:flutter_calendar_week/src/utils/compare_date.dart';
 
+
 class DateItem extends StatefulWidget {
   /// Today
   final DateTime today;
@@ -45,6 +46,12 @@ class DateItem extends StatefulWidget {
   /// [cacheStream] for emit date press event
   final CacheStream<DateTime?> cacheStream;
 
+  final bool showWeek;
+
+  final bool showColorToday;
+
+  final List<String> daysOfWeek;
+
   DateItem({
     required this.today,
     required this.date,
@@ -60,6 +67,8 @@ class DateItem extends StatefulWidget {
     this.onDatePressed,
     this.onDateLongPressed,
     this.decoration,
+    this.showWeek = false, 
+    required this.daysOfWeek, required this.showColorToday,
   });
 
   @override
@@ -85,7 +94,7 @@ class __DateItemState extends State<DateItem> {
             _defaultTextStyle = widget.dateStyle;
 
             /// Check and set [Background] of today
-            if (compareDate(widget.date, widget.today)) {
+            if (widget.showColorToday && compareDate(widget.date, widget.today)) {
               _defaultBackgroundColor = widget.todayBackgroundColor;
             } else if (!data.hasError && data.hasData) {
               final DateTime? dateSelected = data.data;
@@ -102,6 +111,10 @@ class __DateItemState extends State<DateItem> {
           height: widget.size ?? 50.0,
         );
 
+
+  String get weekName => widget.daysOfWeek.elementAt(widget.date!.weekday - 1);
+  String get weekDay => (widget.showWeek ? weekName[0] + '\n' : '');
+
   /// Body layout
   Widget _body() => Container(
         width: widget.size ?? 50.0,
@@ -115,6 +128,7 @@ class __DateItemState extends State<DateItem> {
                 decoration: BoxDecoration(
                   color: _defaultBackgroundColor!,
                   shape: widget.dayShapeBorder!,
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 padding: EdgeInsets.all(5),
                 child: Stack(
@@ -126,9 +140,9 @@ class __DateItemState extends State<DateItem> {
                       bottom: 0,
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
-                        child: Text(
-                          '${widget.date!.day}',
+                        child: Text(weekDay + '${widget.date!.day}',
                           style: _defaultTextStyle!,
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),
@@ -141,11 +155,12 @@ class __DateItemState extends State<DateItem> {
 
   /// Decoration layout
   Widget _decoration() => Positioned(
-        top: 28,
-        left: 0,
+        bottom: 0,
+        top: widget.showWeek ? 0 : null,
+        left: widget.showWeek ? null : 0,
         right: 0,
         child: Container(
-            width: 50,
+            width: 12,
             height: 12,
             alignment: widget.decorationAlignment,
             child: widget.decoration != null

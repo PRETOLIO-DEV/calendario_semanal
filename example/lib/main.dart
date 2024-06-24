@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_week/flutter_calendar_week.dart';
 
-void main() => runApp(MyApp());
+Future<void> main() async {
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
+
+
   @override
   Widget build(BuildContext context) => MaterialApp(
         title: 'CalendarWeek Example',
@@ -44,7 +49,11 @@ class _HomePageState extends State<HomePage> {
               child: CalendarWeek(
                 controller: _controller,
                 height: 100,
+                showYear: true,
                 showMonth: true,
+                unionWeekDay: true,
+                showColorToday: false,
+                dayShapeBorder: BoxShape.rectangle,
                 minDate: DateTime.now().add(
                   Duration(days: -365),
                 ),

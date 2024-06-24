@@ -55,6 +55,7 @@ List<WeekItem> separateWeeks(DateTime minDate, DateTime maxDate,
       /// Add the week to list week
       _weeks.add(WeekItem(
           month: _months[minDateCloned.month - 1],
+          year: _days[0].year,
           dayOfWeek: List.from(_dayOfWeek),
           days: List.from(_days)));
 
@@ -71,6 +72,7 @@ List<WeekItem> separateWeeks(DateTime minDate, DateTime maxDate,
   if (count > 1) {
     _weeks.add(WeekItem(
         month: _months[_days[0].month - 1],
+        year: _days[0].year,
         dayOfWeek: List.from(_dayOfWeek),
         days: List.from(_days)));
     _dayOfWeek.clear();

@@ -184,7 +184,15 @@ class CalendarWeek extends StatefulWidget {
   /// [Callback] changed week event
   final Function() onWeekChanged;
 
+  /// ativa botoes laterais para mudar semana do calendario
   final bool activeIcon;
+
+  /// junta dia da semana com dia
+  final bool unionWeekDay;
+
+  final bool showColorToday;
+
+  final bool showYear;
 
   CalendarWeek._(
       Key? key,
@@ -215,7 +223,10 @@ class CalendarWeek extends StatefulWidget {
       this.decorations,
       this.controller,
       this.onWeekChanged,
-      this.activeIcon,)
+      this.unionWeekDay,
+      this.activeIcon,
+      this.showColorToday,
+      this.showYear,)
       : assert(daysOfWeek.length == 7),
         assert(months.length == 12),
         assert(minDate.isBefore(maxDate)),
@@ -256,7 +267,10 @@ class CalendarWeek extends StatefulWidget {
           List<DecorationItem> decorations = const [],
           CalendarWeekController? controller,
           Function()? onWeekChanged,
-          bool activeIcon = true}) =>
+          bool unionWeekDay = false,
+          bool activeIcon = true,
+          bool showColorToday = true,
+          bool showYear = false}) =>
       CalendarWeek._(
           key,
           maxDate ?? DateTime.now().add(Duration(days: 180)),
@@ -286,7 +300,11 @@ class CalendarWeek extends StatefulWidget {
           decorations,
           controller,
           onWeekChanged ?? () {},
-          activeIcon);
+          unionWeekDay,
+          activeIcon,
+          showColorToday,
+          showYear,
+      );
 
   @override
   _CalendarWeekState createState() => _CalendarWeekState();
@@ -316,6 +334,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
 
   void _setUp() {
     assert(controller.hasClient == false);
+
     _stream ??= _cacheStream.stream!.asBroadcastStream();
     controller
       .._weeks.clear()
@@ -328,7 +347,6 @@ class _CalendarWeekState extends State<CalendarWeek> {
           findCurrentWeekIndexByDate(controller._today, controller._weeks)
       .._widgetJumpToDate = _jumToDateHandler
       .._hasClient = true;
-
     /// Init Page controller
     /// Set [initialPage] is page contain today
     page = controller._currentWeekIndex;
@@ -421,10 +439,10 @@ class _CalendarWeekState extends State<CalendarWeek> {
                   weeks.days.firstWhere((el) => el != null) != null)
               ? widget
                   .monthViewBuilder!(weeks.days.firstWhere((el) => el != null)!)
-              : _monthItem(weeks.month),
+              : _monthItem(weeks.month, weeks.year),
 
           /// Day of week layout
-          _dayOfWeek(weeks.dayOfWeek),
+          if(!widget.unionWeekDay)_dayOfWeek(weeks.dayOfWeek),
 
           /// Date layout
           _dates(weeks.days)
@@ -432,12 +450,12 @@ class _CalendarWeekState extends State<CalendarWeek> {
       );
 
   /// Day of week item layout
-  Widget _monthItem(String title) => Align(
+  Widget _monthItem(String title, int year) => Align(
         alignment: widget.monthAlignment,
         child: Container(
             margin: widget.marginMonth,
             child: Text(
-              title,
+              title + (widget.showYear ? ', $year' : ''),
               style: widget.monthStyle,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
@@ -483,6 +501,8 @@ class _CalendarWeekState extends State<CalendarWeek> {
       today: controller._today,
       date: date,
       size: size,
+      daysOfWeek: widget.daysOfWeek,
+      showWeek: widget.unionWeekDay,
       dateStyle: compareDate(date, controller._today)
           ? widget.todayDateStyle
           : date != null && (date.weekday == 6 || date.weekday == 7)
@@ -523,7 +543,9 @@ class _CalendarWeekState extends State<CalendarWeek> {
         }
         return null;
       }(),
-      cacheStream: _cacheStream);
+      cacheStream: _cacheStream,
+      showColorToday: widget.showColorToday,
+  );
 
   @override
   void dispose() {
