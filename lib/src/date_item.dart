@@ -102,6 +102,11 @@ class __DateItemState extends State<DateItem> {
                 _defaultBackgroundColor = widget.pressedBackgroundColor;
                 _defaultTextStyle = widget.pressedDateStyle;
               }
+            }else{
+              if (compareDate(widget.date, widget.today)) {
+                _defaultBackgroundColor = widget.pressedBackgroundColor;
+                _defaultTextStyle = widget.pressedDateStyle;
+              }
             }
             return _body();
           },
