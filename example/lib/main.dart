@@ -48,9 +48,10 @@ class _HomePageState extends State<HomePage> {
               ]),
               child: CalendarWeek(
                 controller: _controller,
-                height: 100,
+                height: 150,
                 showYear: true,
                 showMonth: true,
+                showPinDate: true,
                 unionWeekDay: true,
                 showColorToday: false,
                 dayShapeBorder: BoxShape.rectangle,

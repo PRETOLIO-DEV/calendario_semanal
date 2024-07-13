@@ -154,6 +154,8 @@ class CalendarWeek extends StatefulWidget {
   /// List contain titles day of week
   final List<String> daysOfWeek;
 
+  final bool showPinDate;
+
   /// List contain title months
   final List<String> months;
 
@@ -226,8 +228,8 @@ class CalendarWeek extends StatefulWidget {
       this.unionWeekDay,
       this.activeIcon,
       this.showColorToday,
-      this.showYear,)
-      : assert(daysOfWeek.length == 7),
+      this.showYear, this.showPinDate,
+      ) : assert(daysOfWeek.length == 7),
         assert(months.length == 12),
         assert(minDate.isBefore(maxDate)),
         super(key: key);
@@ -270,7 +272,9 @@ class CalendarWeek extends StatefulWidget {
           bool unionWeekDay = false,
           bool activeIcon = true,
           bool showColorToday = true,
-          bool showYear = false}) =>
+          bool showYear = false,
+          bool showPinDate = false,
+          }) =>
       CalendarWeek._(
           key,
           maxDate ?? DateTime.now().add(Duration(days: 180)),
@@ -304,6 +308,7 @@ class CalendarWeek extends StatefulWidget {
           activeIcon,
           showColorToday,
           showYear,
+          showPinDate
       );
 
   @override
@@ -501,6 +506,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
       today: controller._today,
       date: date,
       size: size,
+      showPinDate: widget.showPinDate,
       daysOfWeek: widget.daysOfWeek,
       showWeek: widget.unionWeekDay,
       dateStyle: compareDate(date, controller._today)
@@ -512,18 +518,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
       backgroundColor: widget.dateBackgroundColor,
       todayBackgroundColor: widget.todayBackgroundColor,
       pressedBackgroundColor: widget.datePressedBackgroundColor,
-      decorationAlignment: () {
-        /// If date is contain in decorations list, use decorations Alignment
-        /*if (widget.decorations.isNotEmpty) {
-          final List<DecorationItem> matchDate = widget.decorations
-              .where((ele) => compareDate(ele.date, date))
-              .toList();
-          return matchDate.isNotEmpty
-              ? matchDate[0].decorationAlignment
-              : FractionalOffset.center;
-        }*/
-        return FractionalOffset.center;
-      }(),
+      decorationAlignment: FractionalOffset.center,
       dayShapeBorder: widget.dayShapeBorder,
       onDatePressed: (datePressed) {
         controller._selectedDate = datePressed;
