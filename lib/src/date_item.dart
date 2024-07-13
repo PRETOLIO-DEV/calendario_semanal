@@ -107,6 +107,7 @@ class DateItem extends StatelessWidget {
               }
             }else{
               if (compareDate(date, today)) {
+                selectData = true;
                 _defaultBackgroundColor = pressedBackgroundColor;
                 _defaultTextStyle = pressedDateStyle;
               }
