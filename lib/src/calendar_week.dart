@@ -498,6 +498,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
   /// Date layout
   Widget _dates(List<DateTime?> dates) => Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: dates.map(_dateItem).toList()
   );
 
