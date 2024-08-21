@@ -369,28 +369,32 @@ class _CalendarWeekState extends State<CalendarWeek> {
 
   @override
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double w = constraints.maxWidth.isInfinite ? MediaQuery.of(context).size.width : constraints.maxWidth;
+        double h = MediaQuery.of(context).size.height;
 
-    if(widget.height < 100) widget.height = 100;
+        //if(widget.height < 100) widget.height = 100;
 
-    sizeOriginal = w > h ? (h / 7) - 10 : (w / 7) - 10;
+        sizeOriginal = w > h ? (h / 7) - 10 : (w / 7) - 10;
 
-    if(sizeOriginal > widget.height - 60) {
-      size = widget.height - 51;
-    } else if(sizeOriginal <= 40){
-      size = 46;
-    } else {
-      size = sizeOriginal;
-    }
-    return _body();
+        if(sizeOriginal > widget.height - 60) {
+          size = widget.height - 51;
+        } else if(sizeOriginal <= 40){
+          size = 46;
+        } else {
+          size = sizeOriginal;
+        }
+        return _body(w);
+      }
+    );
   }
 
   /// Body layout
-  Widget _body() => Container(
+  Widget _body(double w) => Container(
       color: widget.backgroundColor,
-      width: double.infinity,
-      height: widget.height,
+      width: w,
+      height: widget.height > (size *2) ? widget.height : (size *2),
       child:  Stack(
         alignment: Alignment.center,
         children: [
@@ -438,16 +442,23 @@ class _CalendarWeekState extends State<CalendarWeek> {
   Widget _week(WeekItem weeks) => Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          // Month
-          (widget.monthDisplay &&
-                  widget.monthViewBuilder != null &&
-                  weeks.days.firstWhere((el) => el != null) != null)
-              ? widget
-                  .monthViewBuilder!(weeks.days.firstWhere((el) => el != null)!)
-              : _monthItem(weeks.month, weeks.year),
-
-          /// Day of week layout
-          if(!widget.unionWeekDay)_dayOfWeek(weeks.dayOfWeek),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                // Month
+                (widget.monthDisplay &&
+                    widget.monthViewBuilder != null &&
+                    weeks.days.firstWhere((el) => el != null) != null)
+                    ? widget
+                    .monthViewBuilder!(weeks.days.firstWhere((el) => el != null)!)
+                    : _monthItem(weeks.month, weeks.year),
+            
+                /// Day of week layout
+                if(!widget.unionWeekDay) _dayOfWeek(weeks.dayOfWeek),
+              ],
+            ),
+          ),
 
           /// Date layout
           _dates(weeks.days)
@@ -476,24 +487,26 @@ class _CalendarWeekState extends State<CalendarWeek> {
       );
 
   /// Day of week item layout
-  Widget _dayOfWeekItem(String title) => Container(
-      alignment: Alignment.center,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: size,
-          child: Text(
-            title,
-            style: widget.weekendsIndexes
-                        .indexOf(widget.daysOfWeek.indexOf(title)) !=
-                    -1
-                ? widget.weekendsStyle
-                : widget.dayOfWeekStyle,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
+  Widget _dayOfWeekItem(String title) => Expanded(
+    child: Container(
+        alignment: Alignment.center,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Container(
+            width: size,
+            child: Text(
+              title,
+              style: widget.weekendsIndexes
+                          .indexOf(widget.daysOfWeek.indexOf(title)) !=
+                      -1
+                  ? widget.weekendsStyle
+                  : widget.dayOfWeekStyle,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
           ),
-        ),
-      ));
+        )),
+  );
 
   /// Date layout
   Widget _dates(List<DateTime?> dates) => Row(

@@ -191,18 +191,13 @@ class DateItem extends StatelessWidget {
                     color: _defaultBackgroundColor!, size: size ?? 50.0,
                   ),
                   Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                              color: _defaultBackgroundColor == Colors.white ? Colors.black : Colors.white,
-                              borderRadius: BorderRadius.circular(100)
-                          ),
-                          height: 8, width: 8,
-                        ),
-                      ],
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 5),
+                      decoration: BoxDecoration(
+                          color: _defaultBackgroundColor == Colors.white ? Colors.black : Colors.white,
+                          borderRadius: BorderRadius.circular(100)
+                      ),
+                      height: 8, width: 8,
                     ),
                   ),
                 ],
@@ -251,15 +246,15 @@ class CurvadaLateralWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         CustomPaint(
-          size: Size(10, size/2), // Ajuste o tamanho conforme necessário
+          size: Size(10, size/2.5), // Ajuste o tamanho conforme necessário
           painter: LateralPainter(color),
         ),
-        Container(width: size, height: size/2, color: color,),
+        Container(width: size, height: size/2.5, color: color,),
         Transform(
           alignment: Alignment.center,
           transform: Matrix4.rotationY(math.pi),
           child: CustomPaint(
-            size: Size(10, size/2), // Ajuste o tamanho conforme necessário
+            size: Size(10, size/2.5), // Ajuste o tamanho conforme necessário
             painter: LateralPainter(color),
           ),
         ),
