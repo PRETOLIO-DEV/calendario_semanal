@@ -94,6 +94,8 @@ class DateItem extends StatelessWidget {
             /// Set default style each [builder] is called
             _defaultTextStyle = dateStyle;
             selectData = false;
+            bool isAdjacentDate = false;
+
             /// Check and set [Background] of today
             if (showColorToday && compareDate(date, today)) {
               _defaultBackgroundColor = todayBackgroundColor;
@@ -104,8 +106,14 @@ class DateItem extends StatelessWidget {
                 selectData = true;
                 _defaultBackgroundColor = pressedBackgroundColor;
                 _defaultTextStyle = pressedDateStyle;
+              } else if (dateSelected != null && 
+                        (compareDate(date, dateSelected.subtract(Duration(days: 1))) || 
+                          compareDate(date, dateSelected.add(Duration(days: 1))))) {
+                isAdjacentDate = true;
+                _defaultBackgroundColor = adjacentBackgroundColor; // Defina a cor de fundo para datas adjacentes
+                _defaultTextStyle = adjacentDateStyle; // Defina o estilo de texto para datas adjacentes
               }
-            }else{
+            } else {
               if (compareDate(date, today)) {
                 selectData = true;
                 _defaultBackgroundColor = pressedBackgroundColor;
@@ -134,7 +142,9 @@ class DateItem extends StatelessWidget {
                               : BorderRadius.circular(12),
                         ),
                         padding: showPinDate && selectData
-                            ? EdgeInsets.only(top: 5, left: 5, right: 5)
+                            ? EdgeInsets.only(top: 5, 
+                            left: isAdjacentDate ? 0 : 5, 
+                            right: isAdjacentDate ? 0 :  5)
                             : EdgeInsets.all(5),
                         child: Stack(
                           children: <Widget>[
@@ -244,7 +254,7 @@ class CurvadaLateralWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         CustomPaint(
-          size: Size(size/2, size/2), // Ajuste o tamanho conforme necessário
+          size: Size(10, size/2), // Ajuste o tamanho conforme necessário
           painter: LateralPainter(color),
         ),
         Container(width: size, height: size/2, color: color,),
@@ -252,7 +262,7 @@ class CurvadaLateralWidget extends StatelessWidget {
           alignment: Alignment.center,
           transform: Matrix4.rotationY(math.pi),
           child: CustomPaint(
-            size: Size(size/2, size/2), // Ajuste o tamanho conforme necessário
+            size: Size(10, size/2), // Ajuste o tamanho conforme necessário
             painter: LateralPainter(color),
           ),
         ),
