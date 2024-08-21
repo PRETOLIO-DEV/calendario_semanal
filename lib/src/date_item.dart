@@ -53,6 +53,8 @@ class DateItem extends StatelessWidget {
   final List<String> daysOfWeek;
 
   final bool showPinDate;
+  final Widget Function(Widget)? widgetSelectedDay;
+
 
   DateItem({
     required this.today,
@@ -73,6 +75,7 @@ class DateItem extends StatelessWidget {
     required this.daysOfWeek,
     required this.showColorToday,
     this.showPinDate = false,
+    this.widgetSelectedDay,
   });
 
   /// Default background
@@ -82,6 +85,13 @@ class DateItem extends StatelessWidget {
   late TextStyle? _defaultTextStyle;
 
   bool selectData = false;
+
+
+  Widget _widgetSelectedDay(bool selected, child){
+    if(widgetSelectedDay != null && selected) return widgetSelectedDay!(child);
+    return child;
+  }
+
 
   @override
   Widget build(BuildContext context) => date != null
@@ -117,7 +127,7 @@ class DateItem extends StatelessWidget {
           _defaultTextStyle = pressedDateStyle;
         }
       }
-      return Stack(
+      return _widgetSelectedDay(selectData, Stack(
         alignment: Alignment.topCenter,
         children: [
           Container(
@@ -205,7 +215,7 @@ class DateItem extends StatelessWidget {
             )
           ]
         ],
-      );
+      ));
     },
   )
       : Container(

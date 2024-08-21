@@ -196,6 +196,8 @@ class CalendarWeek extends StatefulWidget {
 
   final bool showYear;
 
+  final Widget Function(Widget)? widgetSelectedDay;
+
   CalendarWeek._(
       Key? key,
       this.maxDate,
@@ -228,7 +230,7 @@ class CalendarWeek extends StatefulWidget {
       this.unionWeekDay,
       this.activeIcon,
       this.showColorToday,
-      this.showYear, this.showPinDate,
+      this.showYear, this.showPinDate, this.widgetSelectedDay
       ) : assert(daysOfWeek.length == 7),
         assert(months.length == 12),
         assert(minDate.isBefore(maxDate)),
@@ -274,6 +276,7 @@ class CalendarWeek extends StatefulWidget {
           bool showColorToday = true,
           bool showYear = false,
           bool showPinDate = false,
+          Widget Function(Widget)? widgetSelectedDay,
           }) =>
       CalendarWeek._(
           key,
@@ -308,7 +311,8 @@ class CalendarWeek extends StatefulWidget {
           activeIcon,
           showColorToday,
           showYear,
-          showPinDate
+          showPinDate,
+          widgetSelectedDay
       );
 
   @override
@@ -520,6 +524,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
       today: controller._today,
       date: date,
       size: size,
+      widgetSelectedDay: widget.widgetSelectedDay,
       showPinDate: widget.showPinDate,
       daysOfWeek: widget.daysOfWeek,
       showWeek: widget.unionWeekDay,
