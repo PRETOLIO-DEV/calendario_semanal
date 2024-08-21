@@ -112,81 +112,94 @@ class DateItem extends StatelessWidget {
                 _defaultTextStyle = pressedDateStyle;
               }
             }
-            return Column(
-              mainAxisSize: MainAxisSize.min,
+            return Stack(
+              alignment: Alignment.topCenter,
               children: [
                 Container(
                   width: size ?? 50.0,
                   height: size ?? 50.0,
                   alignment: FractionalOffset.center,
                   child: GestureDetector(
-
-                    child: GestureDetector(
-                      onTap: _onPressed,
-                      onLongPress: _onLongPressed,
-                      child: Container(
-                          decoration: BoxDecoration(
-                            color: _defaultBackgroundColor!,
-                            shape: dayShapeBorder!,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: EdgeInsets.all(5),
-                          child: Stack(
-                            children: <Widget>[
-                              Positioned(
-                                left: 0,
-                                right: 0,
-                                top: 0,
-                                bottom: 0,
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Text(weekDay + '${date!.day}',
-                                    style: _defaultTextStyle!,
-                                    textAlign: TextAlign.center,
-                                  ),
+                    onTap: _onPressed,
+                    onLongPress: _onLongPressed,
+                    child: Container(
+                        decoration: BoxDecoration(
+                          color: _defaultBackgroundColor!,
+                          border: Border.fromBorderSide(BorderSide.none),
+                          shape: dayShapeBorder!,
+                          borderRadius: showPinDate && selectData
+                              ? BorderRadius.only(
+                              topRight: Radius.circular(12),
+                              topLeft: Radius.circular(12))
+                              : BorderRadius.circular(12),
+                        ),
+                        padding: showPinDate && selectData
+                            ? EdgeInsets.only(top: 5, left: 5, right: 5)
+                            : EdgeInsets.all(5),
+                        child: Stack(
+                          children: <Widget>[
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              top: 0,
+                              bottom: 0,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(weekDay + '${date!.day}',
+                                  style: _defaultTextStyle!,
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
-                              Positioned(
-                                bottom: 0,
-                                top: showWeek ? 0 : null,
-                                left: showWeek ? null : 0,
-                                right: 0,
-                                child: Container(
-                                    width: 12,
-                                    height: 12,
-                                    alignment: decorationAlignment,
-                                    child: decoration != null
-                                        ? FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: decoration!,
-                                    ) : Container()),
-                              )
-                            ],
-                          )),
-                    ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              top: showWeek ? 0 : null,
+                              left: showWeek ? null : 0,
+                              right: 0,
+                              child: Container(
+                                  width: 12,
+                                  height: 12,
+                                  alignment: decorationAlignment,
+                                  child: decoration != null
+                                      ? FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: decoration!,
+                                  ) : Container()
+                              ),
+                            )
+                          ],
+                        )),
                   ),
                 ),
 
                 if(showPinDate && selectData) ...[
-                  Stack(
-                    children: [
-                      CurvadaLateralWidget(
-                        color: _defaultBackgroundColor!, size: size ?? 50.0,
-                      ),
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(height: 15,),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: _defaultBackgroundColor,
-                              borderRadius: BorderRadius.circular(100)
-                            ),
-                            height: 8, width: 8,
+                  Padding(
+                    padding: EdgeInsets.only(top: (size ?? 50.0) - 1),
+                    child: Stack(
+                      alignment:Alignment.center,
+                      children: [
+                        Positioned(top: -10,
+                            child: Container(width: size, height: (size ?? 50.0)/2, color: _defaultBackgroundColor,)),
+                        CurvadaLateralWidget(
+                          color: _defaultBackgroundColor!, size: size ?? 50.0,
+                        ),
+                        Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: _defaultBackgroundColor == Colors.white ? Colors.black : Colors.white,
+                                  borderRadius: BorderRadius.circular(100)
+                                ),
+                                height: 8, width: 8,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   )
                 ]
               ],
@@ -231,15 +244,15 @@ class CurvadaLateralWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         CustomPaint(
-          size: Size(size/2, size), // Ajuste o tamanho conforme necessário
+          size: Size(size/2, size/2), // Ajuste o tamanho conforme necessário
           painter: LateralPainter(color),
         ),
-        Container(width: size, height: size, color: color,),
+        Container(width: size, height: size/2, color: color,),
         Transform(
           alignment: Alignment.center,
           transform: Matrix4.rotationY(math.pi),
           child: CustomPaint(
-            size: Size(size/2, size), // Ajuste o tamanho conforme necessário
+            size: Size(size/2, size/2), // Ajuste o tamanho conforme necessário
             painter: LateralPainter(color),
           ),
         ),
