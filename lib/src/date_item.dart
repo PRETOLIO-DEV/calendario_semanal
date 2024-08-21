@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calendar_week/src/cache_stream_widget.dart';
 import 'package:flutter_calendar_week/src/utils/cache_stream.dart';
 import 'package:flutter_calendar_week/src/utils/compare_date.dart';
-
+import 'dart:math' as math;
 
 class DateItem extends StatelessWidget {
   /// Today
@@ -168,13 +168,25 @@ class DateItem extends StatelessWidget {
                 ),
 
                 if(showPinDate && selectData) ...[
-                  SizedBox(height: 15,),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: _defaultBackgroundColor,
-                      borderRadius: BorderRadius.circular(100)
-                    ),
-                    height: 8, width: 8,
+                  Stack(
+                    children: [
+                      CurvadaLateralWidget(
+                        color: _defaultBackgroundColor!, size: size ?? 50.0,
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(height: 15,),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: _defaultBackgroundColor,
+                              borderRadius: BorderRadius.circular(100)
+                            ),
+                            height: 8, width: 8,
+                          ),
+                        ],
+                      ),
+                    ],
                   )
                 ]
               ],
@@ -205,4 +217,59 @@ class DateItem extends StatelessWidget {
       onDateLongPressed!(date!);
     }
   }
+}
+
+
+class CurvadaLateralWidget extends StatelessWidget {
+  const CurvadaLateralWidget({required this.color, this.size = 50});
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CustomPaint(
+          size: Size(size/2, size), // Ajuste o tamanho conforme necessário
+          painter: LateralPainter(color),
+        ),
+        Container(width: size, height: size, color: color,),
+        Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.rotationY(math.pi),
+          child: CustomPaint(
+            size: Size(size/2, size), // Ajuste o tamanho conforme necessário
+            painter: LateralPainter(color),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class LateralPainter extends CustomPainter {
+  final Color color;
+
+  const LateralPainter(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..strokeWidth = 0
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    final path = Path()
+      ..moveTo(0, size.height) // Início no canto inferior esquerdo
+      ..lineTo(size.width * 0.2, size.height) // Linha até o ponto de controle inferior
+      ..quadraticBezierTo(size.width , size.height , size.width, 0) // Curva de Bézier cúbica
+      ..lineTo(size.width , size.height) // Linha até o canto inferior direito
+      ..close(); // Fecha o caminho
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
