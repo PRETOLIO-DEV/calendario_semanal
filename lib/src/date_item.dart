@@ -69,7 +69,7 @@ class DateItem extends StatelessWidget {
     this.onDatePressed,
     this.onDateLongPressed,
     this.decoration,
-    this.showWeek = false, 
+    this.showWeek = false,
     required this.daysOfWeek,
     required this.showColorToday,
     this.showPinDate = false,
@@ -86,140 +86,137 @@ class DateItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => date != null
       ? CacheStreamBuilder<DateTime?>(
-          cacheStream: cacheStream,
-          cacheBuilder: (_, data) {
-            /// Set default each [builder] is called
-            _defaultBackgroundColor = backgroundColor;
+    cacheStream: cacheStream,
+    cacheBuilder: (_, data) {
+      /// Set default each [builder] is called
+      _defaultBackgroundColor = backgroundColor;
 
-            /// Set default style each [builder] is called
-            _defaultTextStyle = dateStyle;
-            selectData = false;
-            bool isAdjacentDate = false;
+      /// Set default style each [builder] is called
+      _defaultTextStyle = dateStyle;
+      selectData = false;
+      bool isAdjacentDate = false;
+      /// Check and set [Background] of today
+      if (showColorToday && compareDate(date, today)) {
+        _defaultBackgroundColor = todayBackgroundColor;
+      } else if (!data.hasError && data.hasData) {
+        final DateTime? dateSelected = data.data;
 
-            /// Check and set [Background] of today
-            if (showColorToday && compareDate(date, today)) {
-              _defaultBackgroundColor = todayBackgroundColor;
-            } else if (!data.hasError && data.hasData) {
-              final DateTime? dateSelected = data.data;
-
-              if (compareDate(date, dateSelected)) {
-                selectData = true;
-                _defaultBackgroundColor = pressedBackgroundColor;
-                _defaultTextStyle = pressedDateStyle;
-              } else if (dateSelected != null && 
-                        (compareDate(date, dateSelected.subtract(Duration(days: 1))) || 
-                          compareDate(date, dateSelected.add(Duration(days: 1))))) {
-                isAdjacentDate = true;
-                _defaultBackgroundColor = adjacentBackgroundColor; // Defina a cor de fundo para datas adjacentes
-                _defaultTextStyle = adjacentDateStyle; // Defina o estilo de texto para datas adjacentes
-              }
-            } else {
-              if (compareDate(date, today)) {
-                selectData = true;
-                _defaultBackgroundColor = pressedBackgroundColor;
-                _defaultTextStyle = pressedDateStyle;
-              }
-            }
-            return Stack(
-              alignment: Alignment.topCenter,
-              children: [
-                Container(
-                  width: size ?? 50.0,
-                  height: size ?? 50.0,
-                  alignment: FractionalOffset.center,
-                  child: GestureDetector(
-                    onTap: _onPressed,
-                    onLongPress: _onLongPressed,
-                    child: Container(
-                        decoration: BoxDecoration(
-                          color: _defaultBackgroundColor!,
-                          border: Border.fromBorderSide(BorderSide.none),
-                          shape: dayShapeBorder!,
-                          borderRadius: showPinDate && selectData
-                              ? BorderRadius.only(
-                              topRight: Radius.circular(12),
-                              topLeft: Radius.circular(12))
-                              : BorderRadius.circular(12),
-                        ),
-                        padding: showPinDate && selectData
-                            ? EdgeInsets.only(top: 5, 
-                            left: isAdjacentDate ? 0 : 5, 
-                            right: isAdjacentDate ? 0 :  5)
-                            : EdgeInsets.all(5),
-                        child: Stack(
-                          children: <Widget>[
-                            Positioned(
-                              left: 0,
-                              right: 0,
-                              top: 0,
-                              bottom: 0,
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(weekDay + '${date!.day}',
-                                  style: _defaultTextStyle!,
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              top: showWeek ? 0 : null,
-                              left: showWeek ? null : 0,
-                              right: 0,
-                              child: Container(
-                                  width: 12,
-                                  height: 12,
-                                  alignment: decorationAlignment,
-                                  child: decoration != null
-                                      ? FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: decoration!,
-                                  ) : Container()
-                              ),
-                            )
-                          ],
-                        )),
+        if (compareDate(date, dateSelected)) {
+          selectData = true;
+          _defaultBackgroundColor = pressedBackgroundColor;
+          _defaultTextStyle = pressedDateStyle;
+        }else if (dateSelected != null &&
+            (compareDate(date, dateSelected.subtract(Duration(days: 1))) ||
+                compareDate(date, dateSelected.add(Duration(days: 1))))) {
+          isAdjacentDate = true;
+        }
+      }else{
+        if (compareDate(date, today)) {
+          selectData = true;
+          _defaultBackgroundColor = pressedBackgroundColor;
+          _defaultTextStyle = pressedDateStyle;
+        }
+      }
+      return Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          Container(
+            width: size ?? 50.0,
+            height: size ?? 50.0,
+            alignment: FractionalOffset.center,
+            child: GestureDetector(
+              onTap: _onPressed,
+              onLongPress: _onLongPressed,
+              child: Container(
+                  decoration: BoxDecoration(
+                    color: _defaultBackgroundColor!,
+                    border: Border.fromBorderSide(BorderSide.none),
+                    shape: dayShapeBorder!,
+                    borderRadius: showPinDate && selectData
+                        ? BorderRadius.only(
+                        topRight: Radius.circular(12),
+                        topLeft: Radius.circular(12))
+                        : BorderRadius.circular(12),
                   ),
-                ),
-
-                if(showPinDate && selectData) ...[
-                  Padding(
-                    padding: EdgeInsets.only(top: (size ?? 50.0) - 1),
-                    child: Stack(
-                      alignment:Alignment.center,
-                      children: [
-                        Positioned(top: -10,
-                            child: Container(width: size, height: (size ?? 50.0)/2, color: _defaultBackgroundColor,)),
-                        CurvadaLateralWidget(
-                          color: _defaultBackgroundColor!, size: size ?? 50.0,
-                        ),
-                        Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: _defaultBackgroundColor == Colors.white ? Colors.black : Colors.white,
-                                  borderRadius: BorderRadius.circular(100)
-                                ),
-                                height: 8, width: 8,
-                              ),
-                            ],
+                  padding: showPinDate && selectData
+                      ? EdgeInsets.only(top: 5,
+                      left: isAdjacentDate ? 0 : 5,
+                      right: isAdjacentDate ? 0 :  5)
+                      : EdgeInsets.all(5),
+                  child: Stack(
+                    children: <Widget>[
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        bottom: 0,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(weekDay + '${date!.day}',
+                            style: _defaultTextStyle!,
+                            textAlign: TextAlign.center,
                           ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        top: showWeek ? 0 : null,
+                        left: showWeek ? null : 0,
+                        right: 0,
+                        child: Container(
+                            width: 12,
+                            height: 12,
+                            alignment: decorationAlignment,
+                            child: decoration != null
+                                ? FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: decoration!,
+                            ) : Container()
+                        ),
+                      )
+                    ],
+                  )),
+            ),
+          ),
+
+          if(showPinDate && selectData) ...[
+            Padding(
+              padding: EdgeInsets.only(top: (size ?? 50.0) - 1),
+              child: Stack(
+                alignment:Alignment.center,
+                children: [
+                  Positioned(top: -10,
+                      child: Container(width: size, height: (size ?? 50.0)/2, color: _defaultBackgroundColor,)),
+                  CurvadaLateralWidget(
+                    color: _defaultBackgroundColor!, size: size ?? 50.0,
+                  ),
+                  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              color: _defaultBackgroundColor == Colors.white ? Colors.black : Colors.white,
+                              borderRadius: BorderRadius.circular(100)
+                          ),
+                          height: 8, width: 8,
                         ),
                       ],
                     ),
-                  )
-                ]
-              ],
-            );
-          },
-        )
+                  ),
+                ],
+              ),
+            )
+          ]
+        ],
+      );
+    },
+  )
       : Container(
-          width: size ?? 50.0,
-          height: size ?? 50.0,
-        );
+    width: size ?? 50.0,
+    height: size ?? 50.0,
+  );
 
   String get weekName => daysOfWeek.elementAt(date!.weekday - 1);
 
