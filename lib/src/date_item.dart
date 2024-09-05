@@ -142,7 +142,8 @@ class DateItem extends StatelessWidget {
                     color: _defaultBackgroundColor!,
                     border: Border.fromBorderSide(BorderSide.none),
                     shape: dayShapeBorder!,
-                    borderRadius: showPinDate && selectData
+                    borderRadius: dayShapeBorder == BoxShape.circle ? null
+                        : showPinDate && selectData
                         ? BorderRadius.only(
                         topRight: Radius.circular(12),
                         topLeft: Radius.circular(12))
@@ -189,7 +190,7 @@ class DateItem extends StatelessWidget {
             ),
           ),
 
-          if(showPinDate && selectData) ...[
+          if(showPinDate && selectData && dayShapeBorder != BoxShape.circle) ...[
             Padding(
               padding: EdgeInsets.only(top: (size ?? 50.0) - 1),
               child: Stack(
