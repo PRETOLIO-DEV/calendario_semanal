@@ -128,7 +128,8 @@ class DateItem extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: _defaultBackgroundColor!,
                             shape: dayShapeBorder!,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: dayShapeBorder == BoxShape.rectangle
+                                ? BorderRadius.circular(12) : null,
                           ),
                           padding: EdgeInsets.all(5),
                           child: Stack(
@@ -167,7 +168,7 @@ class DateItem extends StatelessWidget {
                   ),
                 ),
 
-                if(showPinDate && selectData) ...[
+                if(showPinDate && selectData && dayShapeBorder == BoxShape.rectangle) ...[
                   Stack(
                     children: [
                       CurvadaLateralWidget(

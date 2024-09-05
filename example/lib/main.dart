@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
                 showPinDate: true,
                 unionWeekDay: true,
                 showColorToday: false,
-                dayShapeBorder: BoxShape.rectangle,
+                dayShapeBorder: BoxShape.circle,
                 minDate: DateTime.now().add(
                   Duration(days: -365),
                 ),
